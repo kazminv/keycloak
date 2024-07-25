@@ -1,0 +1,35 @@
+version: '3.8'
+services:
+  portainer:
+    image: portainer/portainer-ce
+    ports:
+      - "9000:9000"
+      - "8000:8000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    environment:
+      - KEYCLOAK_BASE_URL=https://localhost:8443
+      - KEYCLOAK_REALM=myrealm
+      - KEYCLOAK_CLIENT_ID=portainer-3
+      - KEYCLOAK_CLIENT_SECRET=yXODJfD7UfvFvgJsHvCUrJ8GkRan0kVy
+    networks:
+      - key_cloak_keycloak
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:22.0.3
+    ports:
+      - "8443:8443"
+    environment:
+      - KEYCLOAK_USER=admin
+      - KEYCLOAK_PASSWORD=admin
+      - DB_VENDOR=h2
+    networks:
+      - keycloak_network
+
+networks:
+  key_cloak_keycloak:
+    external: true
+
+volumes:
+  portainer_data:

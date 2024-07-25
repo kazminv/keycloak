@@ -40,6 +40,31 @@ services:
     networks:
       - key_cloak_keycloak
 
+  portainer:
+    image: portainer/portainer-ce
+    ports:
+      - "9000:9000"
+      - "8000:8000"
+      - "9443:9443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /Users/vasilijkazmin/Downloads/portainer_data:/data
+      - ./certs:/certs  # Подключаем папку с сертификатами
+    environment:
+      - KEYCLOAK_BASE_URL=https://localhost:8443
+      - KEYCLOAK_REALM=myrealm
+      - KEYCLOAK_CLIENT_ID=portainer-3
+      - KEYCLOAK_CLIENT_SECRET=yXODJfD7UfvFvgJsHvCUrJ8GkRan0kVy
+      - ADMIN_USER=admin
+      - ADMIN_PASSWORD=admin
+    networks:
+      - key_cloak_keycloak
+    command: >
+      -H unix:///var/run/docker.sock
+      --ssl
+      --sslcert /certs/localhost_cert.pem
+      --sslkey /certs/localhost_key.pem
+
 networks:
   key_cloak_keycloak:
     external: true
